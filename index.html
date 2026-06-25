@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitoria CEMCS</title>
+</head>
+<body>
+
+    <!-- Cabeçalho -->
+    <header>
+        <h1>Monitoria CEMCS</h1>
+        <p>Sistema de gerenciamento e acompanhamento de monitorias.</p>
+    </header>
+
+    <!-- Menu de navegação -->
+    <nav>
+        <ul>
+            <li><a href="#inicio">Início</a></li>
+            <li><a href="#monitores">Monitores</a></li>
+            <li><a href="#horarios">Horários</a></li>
+            <li><a href="#agendamentos">Agendamentos</a></li>
+            <li><a href="#contato">Contato</a></li>
+        </ul>
+    </nav>
+
+    <!-- Conteúdo principal -->
+    <main>
+
+        <!-- Seção inicial -->
+        <section id="inicio">
+            <h2>Bem-vindo ao Monitoria CEMCS</h2>
+            <p>
+                Este sistema foi desenvolvido para facilitar o acompanhamento,
+                organização e agendamento das monitorias oferecidas pela instituição.
+            </p>
+        </section>
+
+        <!-- Seção de monitores -->
+        <section id="monitores">
+            <h2>Monitores Disponíveis</h2>
+
+            <article>
+                <h3>João Silva</h3>
+                <p>Disciplina: Programação Web</p>
+                <p>E-mail: joao@cemcs.edu.br</p>
+            </article>
+
+            <article>
+                <h3>Maria Souza</h3>
+                <p>Disciplina: Banco de Dados</p>
+                <p>E-mail: maria@cemcs.edu.br</p>
+            </article>
+        </section>
+
+        <!-- Seção de horários -->
+        <section id="horarios">
+            <h2>Horários de Atendimento</h2>
+
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>Monitor</th>
+                        <th>Dia</th>
+                        <th>Horário</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>João Silva</td>
+                        <td>Segunda-feira</td>
+                        <td>14h às 16h</td>
+                    </tr>
+                    <tr>
+                        <td>Maria Souza</td>
+                        <td>Quarta-feira</td>
+                        <td>09h às 11h</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Seção de agendamentos -->
+        <section id="agendamentos">
+            <h2>Solicitar Monitoria</h2>
+
+            <form>
+                <label for="nome">Nome:</label><br>
+                <input type="text" id="nome" name="nome"><br><br>
+
+                <label for="email">E-mail:</label><br>
+                <input type="email" id="email" name="email"><br><br>
+
+                <label for="disciplina">Disciplina:</label><br>
+                <select id="disciplina" name="disciplina">
+                    <option>Programação Web</option>
+                    <option>Banco de Dados</option>
+                    <option>Algoritmos</option>
+                </select><br><br>
+
+                <button type="submit">Enviar Solicitação</button>
+            </form>
+        </section>
+
+        <!-- Barra lateral -->
+        <aside>
+            <h2>Avisos</h2>
+            <p>As monitorias devem ser agendadas com antecedência mínima de 24 horas.</p>
+        </aside>
+
+    </main>
+
+    <!-- Rodapé -->
+    <footer id="contato">
+        <p>&copy; 2026 Monitoria CEMCS</p>
+        <p>E-mail: contato@cemcs.edu.br</p>
+    </footer>
+
+</body>
+</html>
