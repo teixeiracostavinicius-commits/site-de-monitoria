@@ -3,120 +3,188 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monitoria CEMCS</title>
+    <title>Monitoria CEMCS - Gestão Coletiva</title>
     <link rel="stylesheet" href="style.css">
-
 </head>
 <body>
 
-    <!-- Cabeçalho -->
+    <!-- Cabeçalho com Controle de Acesso (Roles) -->
     <header>
-        <h1>Monitoria CEMCS</h1>
-        <p>Sistema de gerenciamento e acompanhamento de monitorias.</p>
+        <div class="header-content">
+            <div>
+                <h1>Monitoria CEMCS</h1>
+                <p>Sistema de gerenciamento de monitorias coletivas (1:N).</p>
+            </div>
+            <div class="role-switcher">
+                <label for="perfil-usuario">Perfil de Acesso:</label>
+                <select id="perfil-usuario" onchange="mudarPerfil()">
+                    <option value="publico">Visão Geral (Alunos/Monitores)</option>
+                    <option value="professor">Professor</option>
+                    <option value="pedagogico">Equipe Pedagógica</option>
+                    <option value="direcao">Equipe Diretiva</option>
+                </select>
+            </div>
+        </div>
     </header>
 
-    <!-- Menu de navegação -->
+    <!-- Menu de navegação dinâmico -->
     <nav>
         <ul>
             <li><a href="#inicio">Início</a></li>
             <li><a href="#monitores">Monitores</a></li>
             <li><a href="#horarios">Horários</a></li>
-            <li><a href="#agendamentos">Agendamentos</a></li>
+            <li id="nav-professor" class="hidden"><a href="#painel-professor">Painel do Professor</a></li>
+            <li id="nav-gestor" class="hidden"><a href="#painel-gestor">Painel Gestor</a></li>
             <li><a href="#contato">Contato</a></li>
         </ul>
     </nav>
 
     <!-- Conteúdo principal -->
     <main>
-
         <!-- Seção inicial -->
         <section id="inicio">
-            <h2>Bem-vindo ao Monitoria CEMCS</h2>
+            <h2>Bem-vindo ao Monitoria CEMCS 2.0</h2>
             <p>
-                Este sistema foi desenvolvido para facilitar o acompanhamento,
-                organização e agendamento das monitorias oferecidas pela instituição.
+                Agora os Alunos Monitores apoiam turmas inteiras! Professores podem agendar sessões coletivas 
+                e as equipes Pedagógica e Diretiva acompanham os indicadores em tempo real.
             </p>
+        </section>
+
+        <!-- PAINEL DO PROFESSOR (Visível apenas para perfil 'professor') -->
+        <section id="painel-professor" class="card-destaque hidden">
+            <h2>Painel do Professor - Solicitar Monitoria Coletiva</h2>
+            <form id="form-agendamento-coletivo">
+                <div class="form-group">
+                    <label for="select-professor">Professor Solicitante:</label>
+                    <select id="select-professor" required onchange="carregarTurmasDoProfessor()">
+                        <!-- Preenchido via JS -->
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="select-turma">Turma Vinculada (Atendimento 1:N):</label>
+                    <select id="select-turma" required>
+                        <!-- Preenchido dinamicamente conforme o professor -->
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="select-monitor">Monitor Disponível:</label>
+                    <select id="select-monitor" required>
+                        <option value="João Silva (Programação Web)">João Silva - Programação Web</option>
+                        <option value="Maria Souza (Banco de Dados)">Maria Souza - Banco de Dados</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="data-monitoria">Data Desejada:</label>
+                    <input type="date" id="data-monitoria" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="tema-revisao">Conteúdo / Tópico da Revisão:</label>
+                    <input type="text" id="tema-revisao" placeholder="Ex: Revisão de SQL Joins para a prova" required>
+                </div>
+
+                <button type="submit" class="btn-primary">Agendar para Toda a Turma</button>
+            </form>
+        </section>
+
+        <!-- PAINEL GESTOR (Visível para 'pedagogico' e 'direcao') -->
+        <section id="painel-gestor" class="card-destaque hidden">
+            <h2 id="titulo-painel-gestor">Painel de Indicadores e Relatórios</h2>
+            
+            <!-- Cards de Métricas (KPIs) -->
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <span class="kpi-valor" id="kpi-sessoes">0</span>
+                    <span class="kpi-label">Monitorias Coletivas</span>
+                </div>
+                <div class="kpi-card">
+                    <span class="kpi-valor" id="kpi-alunos">0</span>
+                    <span class="kpi-label">Alunos Impactados</span>
+                </div>
+                <div class="kpi-card">
+                    <span class="kpi-valor" id="kpi-turma-top">-</span>
+                    <span class="kpi-label">Turma Mais Ativa</span>
+                </div>
+            </div>
+
+            <!-- Engajamento por Turma (Foco Pedagógico) -->
+            <h3>Engajamento por Turma</h3>
+            <div id="grafico-turmas" class="barras-container"></div>
+
+            <!-- Desempenho dos Monitores (Foco Diretivo) -->
+            <div id="bloco-diretoria">
+                <h3>Desempenho dos Monitores</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Monitor</th>
+                            <th>Disciplina</th>
+                            <th>Turmas Atendidas</th>
+                            <th>Avaliação Média</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-desempenho-monitores">
+                        <!-- Preenchido via JS -->
+                    </tbody>
+                </table>
+            </div>
         </section>
 
         <!-- Seção de monitores -->
         <section id="monitores">
             <h2>Monitores Disponíveis</h2>
+            <div class="grid-monitores">
+                <article class="card-monitor">
+                    <h3>João Silva</h3>
+                    <p><strong>Disciplina:</strong> Programação Web</p>
+                    <p><strong>Modalidade:</strong> Apoio em Sala / Laboratório</p>
+                    <p><strong>E-mail:</strong> joao@cemcs.edu.br</p>
+                </article>
 
-            <article>
-                <h3>João Silva</h3>
-                <p>Disciplina: Programação Web</p>
-                <p>E-mail: joao@cemcs.edu.br</p>
-            </article>
-
-            <article>
-                <h3>Maria Souza</h3>
-                <p>Disciplina: Banco de Dados</p>
-                <p>E-mail: maria@cemcs.edu.br</p>
-            </article>
+                <article class="card-monitor">
+                    <h3>Maria Souza</h3>
+                    <p><strong>Disciplina:</strong> Banco de Dados</p>
+                    <p><strong>Modalidade:</strong> Apoio em Sala / Laboratório</p>
+                    <p><strong>E-mail:</strong> maria@cemcs.edu.br</p>
+                </article>
+            </div>
         </section>
 
-        <!-- Seção de horários -->
+        <!-- Seção de horários e agenda coletiva -->
         <section id="horarios">
-            <h2>Horários de Atendimento</h2>
-
-            <table border="1">
+            <h2>Agenda de Monitorias Coletivas (Turmas)</h2>
+            <table>
                 <thead>
                     <tr>
-                        <th>Monitor</th>
-                        <th>Dia</th>
-                        <th>Horário</th>
+                        <th>Data</th>
+                        <th>Turma (Qtd. Alunos)</th>
+                        <th>Professor</th>
+                        <th>Monitor / Disciplina</th>
+                        <th>Conteúdo</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td>João Silva</td>
-                        <td>Segunda-feira</td>
-                        <td>14h às 16h</td>
-                    </tr>
-                    <tr>
-                        <td>Maria Souza</td>
-                        <td>Quarta-feira</td>
-                        <td>09h às 11h</td>
-                    </tr>
+                <tbody id="tabela-agendamentos">
+                    <!-- Preenchido dinamicamente pelo JS -->
                 </tbody>
             </table>
         </section>
 
-        <!-- Seção de agendamentos -->
-        <section id="agendamentos">
-            <h2>Solicitar Monitoria</h2>
-
-            <form>
-                <label for="nome">Nome:</label><br>
-                <input type="text" id="nome" name="nome"><br><br>
-
-                <label for="email">E-mail:</label><br>
-                <input type="email" id="email" name="email"><br><br>
-
-                <label for="disciplina">Disciplina:</label><br>
-                <select id="disciplina" name="disciplina">
-                    <option>Programação Web</option>
-                    <option>Banco de Dados</option>
-                    <option>Algoritmos</option>
-                </select><br><br>
-
-                <button type="submit">Enviar Solicitação</button>
-            </form>
-        </section>
-
         <!-- Barra lateral -->
         <aside>
-            <h2>Avisos</h2>
-            <p>As monitorias devem ser agendadas com antecedência mínima de 24 horas.</p>
+            <h2>Avisos Institucionais</h2>
+            <p><strong>Novo Fluxo:</strong> Os agendamentos agora são realizados exclusivamente pelos professores para suas respectivas turmas com antecedência mínima de 24h.</p>
         </aside>
-
     </main>
 
     <!-- Rodapé -->
     <footer id="contato">
-        <p>&copy; 2026 Monitoria CEMCS</p>
+        <p>&copy; 2026 Monitoria CEMCS - Gestão Escolar Ágil</p>
         <p>E-mail: contato@cemcs.edu.br</p>
     </footer>
 
+    <script src="script.js"></script>
 </body>
 </html>
