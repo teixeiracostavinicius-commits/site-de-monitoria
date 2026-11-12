@@ -3,188 +3,910 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monitoria CEMCS - Gestão Coletiva</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Monitoria CEMCS - Plataforma Acessível de Gestão Coletiva</title>
+    <style>
+        :root {
+            /* Paleta de Alto Contraste (WCAG AAA / AA) */
+            --cor-primaria: #0f172a;         /* Azul marinho muito escuro (Contraste > 15:1 com branco) */
+            --cor-secundaria: #1d4ed8;       /* Azul royal profundo (Contraste > 6.7:1 com branco) */
+            --cor-foco: #f59e0b;             /* Âmbar vibrante para indicador de foco no teclado */
+            --cor-fundo: #f8fafc;            /* Cinza muito claro */
+            --cor-texto: #0f172a;            /* Texto principal escuro (Contraste > 15:1 no fundo claro) */
+            --cor-texto-secundario: #334155; /* Contraste > 8.5:1 no fundo claro */
+            --cor-branco: #ffffff;
+            --cor-borda: #64748b;            /* Borda visível (Contraste > 3:1 para componentes de UI) */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--cor-fundo);
+            color: var(--cor-texto);
+            line-height: 1.6;
+            font-size: 1rem;
+        }
+
+        /* Classe utilitária para leitores de tela */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Indicador de Foco Global para Navegação por Teclado (Tecla Tab) */
+        a:focus-visible,
+        button:focus-visible,
+        select:focus-visible,
+        input:focus-visible,
+        main:focus-visible {
+            outline: 3px solid var(--cor-foco);
+            outline-offset: 3px;
+        }
+
+        /* Botão Skip Link (Aparece ao pressionar Tab no topo da página) */
+        .skip-link {
+            position: absolute;
+            top: -100px;
+            left: 1rem;
+            background-color: var(--cor-foco);
+            color: var(--cor-primaria);
+            font-weight: 700;
+            padding: 0.75rem 1.25rem;
+            border-radius: 0 0 6px 6px;
+            text-decoration: none;
+            z-index: 1000;
+            transition: top 0.2s ease;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        /* Cabeçalho */
+        header {
+            background-color: var(--cor-primaria);
+            color: var(--cor-branco);
+            padding: 1.5rem 2rem;
+        }
+
+        .header-content {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        .brand-area {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-img {
+            border-radius: 8px;
+            border: 2px solid var(--cor-branco);
+        }
+
+        .role-switcher {
+            background-color: #1e293b;
+            padding: 0.8rem 1rem;
+            border-radius: 6px;
+            border: 1px solid #475569;
+        }
+
+        .role-switcher label {
+            color: var(--cor-branco);
+            font-size: 0.95rem;
+            margin-bottom: 0.4rem;
+        }
+
+        .role-switcher select {
+            background-color: var(--cor-branco);
+            color: var(--cor-texto);
+            padding: 0.5rem;
+            border-radius: 4px;
+            border: 2px solid var(--cor-branco);
+            font-weight: 600;
+        }
+
+        /* Navegação */
+        nav {
+            background-color: var(--cor-secundaria);
+            padding: 0.9rem 2rem;
+        }
+
+        nav ul {
+            max-width: 1100px;
+            margin: 0 auto;
+            list-style: none;
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: var(--cor-branco);
+            text-decoration: underline;
+            text-underline-offset: 4px;
+            font-weight: 600;
+            padding: 0.25rem 0.4rem;
+            border-radius: 4px;
+        }
+
+        nav a:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Conteúdo Principal */
+        main {
+            max-width: 1100px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        section, aside {
+            background-color: var(--cor-branco);
+            padding: 1.75rem;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            box-shadow: 0 2px 4px rgba(15, 23, 42, 0.06);
+        }
+
+        .card-destaque {
+            border-left: 6px solid var(--cor-secundaria);
+        }
+
+        h2 {
+            color: var(--cor-primaria);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        h3 {
+            color: var(--cor-primaria);
+            font-size: 1.25rem;
+            margin: 1.25rem 0 0.75rem;
+        }
+
+        /* Formulários Acessíveis */
+        .instrucao-form {
+            color: var(--cor-texto-secundario);
+            margin-bottom: 1.2rem;
+            font-size: 0.95rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 0.4rem;
+            color: var(--cor-texto);
+        }
+
+        .texto-ajuda {
+            display: block;
+            margin-top: 0.3rem;
+            font-size: 0.875rem;
+            color: var(--cor-texto-secundario);
+        }
+
+        input, select {
+            width: 100%;
+            padding: 0.7rem;
+            border: 2px solid var(--cor-borda);
+            border-radius: 6px;
+            font-size: 1rem;
+            background-color: var(--cor-branco);
+            color: var(--cor-texto);
+        }
+
+        .btn-primary {
+            background-color: var(--cor-secundaria);
+            color: var(--cor-branco);
+            border: 2px solid transparent;
+            padding: 0.85rem 1.5rem;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 0.5rem;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--cor-primaria);
+        }
+
+        /* Cards de Monitores */
+        .grid-monitores {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .card-monitor {
+            border: 1px solid var(--cor-borda);
+            padding: 1.25rem;
+            border-radius: 8px;
+            background-color: #f8fafc;
+        }
+
+        .monitor-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .avatar-monitor {
+            border-radius: 50%;
+            border: 2px solid var(--cor-primaria);
+        }
+
+        .badge-disciplina {
+            display: inline-block;
+            background-color: #e0e7ff;
+            color: #1e1b4b;
+            font-weight: 700;
+            font-size: 0.875rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            margin-top: 0.25rem;
+        }
+
+        .link-acao {
+            display: inline-block;
+            margin-top: 0.75rem;
+            color: var(--cor-secundaria);
+            font-weight: 700;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+
+        /* Tabelas */
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 0.5rem;
+        }
+
+        caption {
+            text-align: left;
+            font-size: 0.9rem;
+            color: var(--cor-texto-secundario);
+            margin-bottom: 0.5rem;
+        }
+
+        th, td {
+            padding: 0.85rem;
+            text-align: left;
+            border-bottom: 1px solid #cbd5e1;
+        }
+
+        th {
+            background-color: #e2e8f0;
+            color: var(--cor-primaria);
+            font-weight: 700;
+        }
+
+        /* KPIs e Gráficos */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .kpi-card {
+            background-color: #eff6ff;
+            border: 2px solid #93c5fd;
+            padding: 1.2rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .kpi-valor {
+            display: block;
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--cor-primaria);
+        }
+
+        .kpi-label {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--cor-texto-secundario);
+        }
+
+        .barra-item {
+            margin-bottom: 1rem;
+        }
+
+        .barra-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.95rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .barra-fundo {
+            background-color: #cbd5e1;
+            height: 14px;
+            border-radius: 7px;
+            overflow: hidden;
+        }
+
+        .barra-preenchimento {
+            background-color: var(--cor-secundaria);
+            height: 100%;
+        }
+
+        /* Aside */
+        aside {
+            background-color: #fef9c3;
+            border: 1px solid #ca8a04;
+            border-left: 6px solid #a16207;
+            color: #422006;
+        }
+
+        /* Rodapé */
+        footer {
+            text-align: center;
+            padding: 2rem 1.5rem;
+            background-color: var(--cor-primaria);
+            color: var(--cor-branco);
+            margin-top: 2rem;
+        }
+
+        .footer-link {
+            color: #fde047; /* Amarelo claro com alto contraste sobre azul escuro (> 12:1) */
+            font-weight: 600;
+            text-decoration: underline;
+            display: inline-block;
+            margin-top: 0.5rem;
+        }
+    </style>
 </head>
 <body>
 
-    <!-- Cabeçalho com Controle de Acesso (Roles) -->
-    <header>
+    <!-- Link de salto para navegação rápida via teclado (Tecla Tab) -->
+    <a href="#conteudo-principal" class="skip-link">Pular para o conteúdo principal</a>
+
+    <!-- Cabeçalho -->
+    <header role="banner">
         <div class="header-content">
-            <div>
-                <h1>Monitoria CEMCS</h1>
-                <p>Sistema de gerenciamento de monitorias coletivas (1:N).</p>
+            <div class="brand-area">
+                <img 
+                    src="https://via.placeholder.com/60x60/0f172a/ffffff?text=CEMCS" 
+                    alt="Logotipo institucional do sistema Monitoria CEMCS com fundo azul escuro e letras brancas" 
+                    class="logo-img"
+                >
+                <div>
+                    <h1>Monitoria CEMCS</h1>
+                    <p>Sistema acessível de gerenciamento de monitorias coletivas.</p>
+                </div>
             </div>
+
             <div class="role-switcher">
-                <label for="perfil-usuario">Perfil de Acesso:</label>
-                <select id="perfil-usuario" onchange="mudarPerfil()">
-                    <option value="publico">Visão Geral (Alunos/Monitores)</option>
+                <label for="perfil-usuario">Selecione seu perfil de acesso:</label>
+                <select id="perfil-usuario" aria-describedby="desc-perfil">
+                    <option value="publico">Visão Geral (Estudantes e Monitores)</option>
                     <option value="professor">Professor</option>
                     <option value="pedagogico">Equipe Pedagógica</option>
                     <option value="direcao">Equipe Diretiva</option>
                 </select>
+                <span id="desc-perfil" class="sr-only">A alteração do perfil exibe ou oculta painéis específicos na página.</span>
             </div>
         </div>
     </header>
 
-    <!-- Menu de navegação dinâmico -->
-    <nav>
+    <!-- Menu de navegação principal -->
+    <nav aria-label="Menu principal de navegação">
         <ul>
-            <li><a href="#inicio">Início</a></li>
-            <li><a href="#monitores">Monitores</a></li>
-            <li><a href="#horarios">Horários</a></li>
-            <li id="nav-professor" class="hidden"><a href="#painel-professor">Painel do Professor</a></li>
-            <li id="nav-gestor" class="hidden"><a href="#painel-gestor">Painel Gestor</a></li>
-            <li><a href="#contato">Contato</a></li>
+            <li><a href="#inicio">Ir para Início</a></li>
+            <li><a href="#monitores">Conhecer Monitores Disponíveis</a></li>
+            <li><a href="#horarios">Consultar Agenda de Monitorias Coletivas</a></li>
+            <li id="nav-professor" class="hidden"><a href="#painel-professor">Acessar Painel do Professor</a></li>
+            <li id="nav-gestor" class="hidden"><a href="#painel-gestor">Acessar Painel de Indicadores</a></li>
+            <li><a href="#contato">Informações de Contato</a></li>
         </ul>
     </nav>
 
+    <!-- Região de anúncios dinâmicos para leitores de tela -->
+    <div id="status-anuncio" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
     <!-- Conteúdo principal -->
-    <main>
+    <main id="conteudo-principal" tabindex="-1">
+
         <!-- Seção inicial -->
-        <section id="inicio">
-            <h2>Bem-vindo ao Monitoria CEMCS 2.0</h2>
+        <section id="inicio" aria-labelledby="titulo-inicio">
+            <h2 id="titulo-inicio">Bem-vindo ao Monitoria CEMCS 2.0</h2>
             <p>
-                Agora os Alunos Monitores apoiam turmas inteiras! Professores podem agendar sessões coletivas 
-                e as equipes Pedagógica e Diretiva acompanham os indicadores em tempo real.
+                Esta plataforma permite que Alunos Monitores apoiem turmas inteiras. 
+                Professores podem agendar sessões de revisão coletiva e as equipes Pedagógica e Diretiva 
+                acompanham os indicadores de participação estudantil.
             </p>
         </section>
 
-        <!-- PAINEL DO PROFESSOR (Visível apenas para perfil 'professor') -->
-        <section id="painel-professor" class="card-destaque hidden">
-            <h2>Painel do Professor - Solicitar Monitoria Coletiva</h2>
+        <!-- PAINEL DO PROFESSOR -->
+        <section id="painel-professor" class="card-destaque hidden" aria-labelledby="titulo-painel-prof">
+            <h2 id="titulo-painel-prof">Painel do Professor: Solicitar Monitoria Coletiva</h2>
+            <p class="instrucao-form">Todos os campos marcados com asterisco (*) são obrigatórios.</p>
+
             <form id="form-agendamento-coletivo">
                 <div class="form-group">
-                    <label for="select-professor">Professor Solicitante:</label>
-                    <select id="select-professor" required onchange="carregarTurmasDoProfessor()">
-                        <!-- Preenchido via JS -->
-                    </select>
+                    <label for="select-professor">Professor Solicitante *:</label>
+                    <select id="select-professor" required></select>
                 </div>
 
                 <div class="form-group">
-                    <label for="select-turma">Turma Vinculada (Atendimento 1:N):</label>
-                    <select id="select-turma" required>
-                        <!-- Preenchido dinamicamente conforme o professor -->
-                    </select>
+                    <label for="select-turma">Turma Vinculada (Atendimento Coletivo) *:</label>
+                    <select id="select-turma" required aria-describedby="ajuda-turma"></select>
+                    <small id="ajuda-turma" class="texto-ajuda">As turmas listadas correspondem apenas às disciplinas vinculadas ao professor selecionado.</small>
                 </div>
 
                 <div class="form-group">
-                    <label for="select-monitor">Monitor Disponível:</label>
+                    <label for="select-monitor">Escolher Monitor Disponível *:</label>
                     <select id="select-monitor" required>
-                        <option value="João Silva (Programação Web)">João Silva - Programação Web</option>
-                        <option value="Maria Souza (Banco de Dados)">Maria Souza - Banco de Dados</option>
+                        <option value="João Silva (Programação Web)">João Silva — Disciplina: Programação Web</option>
+                        <option value="Maria Souza (Banco de Dados)">Maria Souza — Disciplina: Banco de Dados</option>
                     </select>
                 </div>
 
                 <div class="form-group">
-                    <label for="data-monitoria">Data Desejada:</label>
+                    <label for="data-monitoria">Data da Monitoria *:</label>
                     <input type="date" id="data-monitoria" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="tema-revisao">Conteúdo / Tópico da Revisão:</label>
-                    <input type="text" id="tema-revisao" placeholder="Ex: Revisão de SQL Joins para a prova" required>
+                    <label for="tema-revisao">Conteúdo ou Tópico da Revisão *:</label>
+                    <input 
+                        type="text" 
+                        id="tema-revisao" 
+                        placeholder="Exemplo: Revisão de consultas SQL antes da avaliação" 
+                        required
+                    >
                 </div>
 
-                <button type="submit" class="btn-primary">Agendar para Toda a Turma</button>
+                <button type="submit" class="btn-primary">Confirmar Agendamento Coletivo para a Turma</button>
             </form>
         </section>
 
-        <!-- PAINEL GESTOR (Visível para 'pedagogico' e 'direcao') -->
-        <section id="painel-gestor" class="card-destaque hidden">
+        <!-- PAINEL GESTOR (PEDAGÓGICO E DIRETORIA) -->
+        <section id="painel-gestor" class="card-destaque hidden" aria-labelledby="titulo-painel-gestor">
             <h2 id="titulo-painel-gestor">Painel de Indicadores e Relatórios</h2>
             
             <!-- Cards de Métricas (KPIs) -->
-            <div class="kpi-grid">
+            <div class="kpi-grid" role="region" aria-label="Resumo numérico de atendimentos">
                 <div class="kpi-card">
                     <span class="kpi-valor" id="kpi-sessoes">0</span>
-                    <span class="kpi-label">Monitorias Coletivas</span>
+                    <span class="kpi-label">Monitorias Coletivas Realizadas</span>
                 </div>
                 <div class="kpi-card">
                     <span class="kpi-valor" id="kpi-alunos">0</span>
-                    <span class="kpi-label">Alunos Impactados</span>
+                    <span class="kpi-label">Total de Estudantes Impactados</span>
                 </div>
                 <div class="kpi-card">
                     <span class="kpi-valor" id="kpi-turma-top">-</span>
-                    <span class="kpi-label">Turma Mais Ativa</span>
+                    <span class="kpi-label">Turma com Maior Participação</span>
                 </div>
             </div>
 
-            <!-- Engajamento por Turma (Foco Pedagógico) -->
+            <!-- Engajamento por Turma -->
             <h3>Engajamento por Turma</h3>
             <div id="grafico-turmas" class="barras-container"></div>
 
-            <!-- Desempenho dos Monitores (Foco Diretivo) -->
+            <!-- Desempenho dos Monitores -->
             <div id="bloco-diretoria">
                 <h3>Desempenho dos Monitores</h3>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Monitor</th>
-                            <th>Disciplina</th>
-                            <th>Turmas Atendidas</th>
-                            <th>Avaliação Média</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabela-desempenho-monitores">
-                        <!-- Preenchido via JS -->
-                    </tbody>
-                </table>
+                <div class="table-responsive">
+                    <table>
+                        <caption>Relatório de turmas atendidas e avaliação média dos monitores</caption>
+                        <thead>
+                            <tr>
+                                <th scope="col">Nome do Monitor</th>
+                                <th scope="col">Disciplina</th>
+                                <th scope="col">Total de Turmas Atendidas</th>
+                                <th scope="col">Avaliação Média</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-desempenho-monitores"></tbody>
+                    </table>
+                </div>
             </div>
         </section>
 
         <!-- Seção de monitores -->
-        <section id="monitores">
-            <h2>Monitores Disponíveis</h2>
+        <section id="monitores" aria-labelledby="titulo-monitores">
+            <h2 id="titulo-monitores">Monitores Disponíveis</h2>
             <div class="grid-monitores">
                 <article class="card-monitor">
-                    <h3>João Silva</h3>
-                    <p><strong>Disciplina:</strong> Programação Web</p>
-                    <p><strong>Modalidade:</strong> Apoio em Sala / Laboratório</p>
-                    <p><strong>E-mail:</strong> joao@cemcs.edu.br</p>
+                    <div class="monitor-header">
+                        <img 
+                            src="https://via.placeholder.com/80x80/1e293b/ffffff?text=JS" 
+                            alt="Retrato ilustrativo do monitor João Silva, estudante de Programação Web" 
+                            class="avatar-monitor"
+                        >
+                        <div>
+                            <h3>João Silva</h3>
+                            <p class="badge-disciplina">Programação Web</p>
+                        </div>
+                    </div>
+                    <p><strong>Modalidade:</strong> Apoio coletivo em sala e laboratório de informática</p>
+                    <p>
+                        <a href="mailto:joao@cemcs.edu.br" class="link-acao">
+                            Enviar e-mail para o monitor João Silva (joao@cemcs.edu.br)
+                        </a>
+                    </p>
                 </article>
 
                 <article class="card-monitor">
-                    <h3>Maria Souza</h3>
-                    <p><strong>Disciplina:</strong> Banco de Dados</p>
-                    <p><strong>Modalidade:</strong> Apoio em Sala / Laboratório</p>
-                    <p><strong>E-mail:</strong> maria@cemcs.edu.br</p>
+                    <div class="monitor-header">
+                        <img 
+                            src="https://via.placeholder.com/80x80/1e293b/ffffff?text=MS" 
+                            alt="Retrato ilustrativo da monitora Maria Souza, estudante de Banco de Dados" 
+                            class="avatar-monitor"
+                        >
+                        <div>
+                            <h3>Maria Souza</h3>
+                            <p class="badge-disciplina">Banco de Dados</p>
+                        </div>
+                    </div>
+                    <p><strong>Modalidade:</strong> Apoio coletivo em sala e laboratório de informática</p>
+                    <p>
+                        <a href="mailto:maria@cemcs.edu.br" class="link-acao">
+                            Enviar e-mail para a monitora Maria Souza (maria@cemcs.edu.br)
+                        </a>
+                    </p>
                 </article>
             </div>
         </section>
 
         <!-- Seção de horários e agenda coletiva -->
-        <section id="horarios">
-            <h2>Agenda de Monitorias Coletivas (Turmas)</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Data</th>
-                        <th>Turma (Qtd. Alunos)</th>
-                        <th>Professor</th>
-                        <th>Monitor / Disciplina</th>
-                        <th>Conteúdo</th>
-                    </tr>
-                </thead>
-                <tbody id="tabela-agendamentos">
-                    <!-- Preenchido dinamicamente pelo JS -->
-                </tbody>
-            </table>
+        <section id="horarios" aria-labelledby="titulo-horarios">
+            <h2 id="titulo-horarios">Agenda de Monitorias Coletivas (Turmas)</h2>
+            <div class="table-responsive">
+                <table>
+                    <caption>Cronograma atualizado das monitorias agendadas por turma</caption>
+                    <thead>
+                        <tr>
+                            <th scope="col">Data</th>
+                            <th scope="col">Turma e Quantidade de Alunos</th>
+                            <th scope="col">Professor Responsável</th>
+                            <th scope="col">Monitor e Disciplina</th>
+                            <th scope="col">Conteúdo da Revisão</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-agendamentos"></tbody>
+                </table>
+            </div>
         </section>
 
-        <!-- Barra lateral -->
-        <aside>
-            <h2>Avisos Institucionais</h2>
-            <p><strong>Novo Fluxo:</strong> Os agendamentos agora são realizados exclusivamente pelos professores para suas respectivas turmas com antecedência mínima de 24h.</p>
+        <!-- Barra lateral de avisos -->
+        <aside aria-labelledby="titulo-avisos">
+            <h2 id="titulo-avisos">Avisos Institucionais</h2>
+            <p>
+                <strong>Prazo de Solicitação:</strong> Os agendamentos coletivos devem ser registrados pelos professores com antecedência mínima de 24 horas para organização dos laboratórios.
+            </p>
         </aside>
+
     </main>
 
     <!-- Rodapé -->
-    <footer id="contato">
-        <p>&copy; 2026 Monitoria CEMCS - Gestão Escolar Ágil</p>
-        <p>E-mail: contato@cemcs.edu.br</p>
+    <footer id="contato" role="contentinfo">
+        <p>&copy; 2026 Monitoria CEMCS — Plataforma Educacional Acessível</p>
+        <p>
+            <a href="mailto:contato@cemcs.edu.br" class="footer-link">
+                Entrar em contato com a coordenação pelo e-mail contato@cemcs.edu.br
+            </a>
+        </p>
     </footer>
 
-    <script src="script.js"></script>
+    <script>
+        // =========================================================================
+        // 1. DADOS ESTRUTURADOS (Modelo 1:N e Vínculos de Turmas)
+        // =========================================================================
+
+        const dbTurmas = [
+            { id: "1A-DS", nome: "1º Ano A - Desenvolvimento de Sistemas", qtdAlunos: 35 },
+            { id: "2B-DS", nome: "2º Ano B - Desenvolvimento de Sistemas", qtdAlunos: 32 },
+            { id: "3A-INFO", nome: "3º Ano A - Informática", qtdAlunos: 28 }
+        ];
+
+        const dbProfessores = [
+            { 
+                id: 1, 
+                nome: "Prof. Carlos Mendes", 
+                disciplina: "Programação Web", 
+                turmasIds: ["1A-DS", "2B-DS"] 
+            },
+            { 
+                id: 2, 
+                nome: "Profa. Ana Beatriz", 
+                disciplina: "Banco de Dados", 
+                turmasIds: ["2B-DS", "3A-INFO"] 
+            }
+        ];
+
+        let dbAgendamentosColetivos = [
+            {
+                id: 101,
+                data: "2026-11-16",
+                turmaId: "1A-DS",
+                professorNome: "Prof. Carlos Mendes",
+                monitor: "João Silva (Programação Web)",
+                tema: "Revisão de HTML Semântico e Acessibilidade"
+            },
+            {
+                id: 102,
+                data: "2026-11-18",
+                turmaId: "2B-DS",
+                professorNome: "Profa. Ana Beatriz",
+                monitor: "Maria Souza (Banco de Dados)",
+                tema: "Modelagem Entidade-Relacionamento (MER)"
+            },
+            {
+                id: 103,
+                data: "2026-11-20",
+                turmaId: "2B-DS",
+                professorNome: "Prof. Carlos Mendes",
+                monitor: "João Silva (Programação Web)",
+                tema: "Manipulação de DOM com JavaScript"
+            }
+        ];
+
+        // Função auxiliar para anunciar atualizações aos leitores de tela
+        function anunciarParaLeitorDeTela(mensagem) {
+            const regiaoLive = document.getElementById("status-anuncio");
+            regiaoLive.textContent = "";
+            setTimeout(() => {
+                regiaoLive.textContent = mensagem;
+            }, 100);
+        }
+
+        // =========================================================================
+        // 2. CONTROLE DE ACESSO POR PERFIL (RBAC)
+        // =========================================================================
+
+        document.getElementById("perfil-usuario").addEventListener("change", mudarPerfil);
+
+        function mudarPerfil() {
+            const perfil = document.getElementById("perfil-usuario").value;
+
+            const painelProfessor = document.getElementById("painel-professor");
+            const painelGestor = document.getElementById("painel-gestor");
+            const navProfessor = document.getElementById("nav-professor");
+            const navGestor = document.getElementById("nav-gestor");
+            const blocoDiretoria = document.getElementById("bloco-diretoria");
+            const tituloGestor = document.getElementById("titulo-painel-gestor");
+
+            painelProfessor.classList.add("hidden");
+            painelGestor.classList.add("hidden");
+            navProfessor.classList.add("hidden");
+            navGestor.classList.add("hidden");
+
+            if (perfil === "professor") {
+                painelProfessor.classList.remove("hidden");
+                navProfessor.classList.remove("hidden");
+                anunciarParaLeitorDeTela("Perfil alterado para Professor. O painel de agendamento coletivo está disponível.");
+            } else if (perfil === "pedagogico") {
+                painelGestor.classList.remove("hidden");
+                navGestor.classList.remove("hidden");
+                tituloGestor.textContent = "Painel Pedagógico: Acompanhamento de Turmas";
+                blocoDiretoria.classList.add("hidden");
+                atualizarDashboardGestor();
+                anunciarParaLeitorDeTela("Perfil alterado para Equipe Pedagógica. Exibindo indicadores de engajamento por turma.");
+            } else if (perfil === "direcao") {
+                painelGestor.classList.remove("hidden");
+                navGestor.classList.remove("hidden");
+                tituloGestor.textContent = "Painel Diretivo: Indicadores Globais e Monitores";
+                blocoDiretoria.classList.remove("hidden");
+                atualizarDashboardGestor();
+                anunciarParaLeitorDeTela("Perfil alterado para Equipe Diretiva. Exibindo indicadores globais e desempenho dos monitores.");
+            } else {
+                anunciarParaLeitorDeTela("Perfil alterado para Visão Geral de Estudantes e Monitores.");
+            }
+        }
+
+        // =========================================================================
+        // 3. LÓGICA DO PAINEL DO PROFESSOR
+        // =========================================================================
+
+        document.getElementById("select-professor").addEventListener("change", carregarTurmasDoProfessor);
+
+        function inicializarFormularioProfessor() {
+            const selectProf = document.getElementById("select-professor");
+            selectProf.innerHTML = "";
+
+            dbProfessores.forEach(prof => {
+                const option = document.createElement("option");
+                option.value = prof.id;
+                option.textContent = `${prof.nome} (${prof.disciplina})`;
+                selectProf.appendChild(option);
+            });
+
+            carregarTurmasDoProfessor();
+        }
+
+        function carregarTurmasDoProfessor() {
+            const profId = parseInt(document.getElementById("select-professor").value, 10);
+            const professor = dbProfessores.find(p => p.id === profId);
+            const selectTurma = document.getElementById("select-turma");
+            
+            selectTurma.innerHTML = "";
+
+            professor.turmasIds.forEach(turmaId => {
+                const turma = dbTurmas.find(t => t.id === turmaId);
+                if (turma) {
+                    const option = document.createElement("option");
+                    option.value = turma.id;
+                    option.textContent = `${turma.nome} (${turma.qtdAlunos} estudantes)`;
+                    selectTurma.appendChild(option);
+                }
+            });
+        }
+
+        document.getElementById("form-agendamento-coletivo").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const profId = parseInt(document.getElementById("select-professor").value, 10);
+            const professor = dbProfessores.find(p => p.id === profId);
+            const turmaId = document.getElementById("select-turma").value;
+            const monitor = document.getElementById("select-monitor").value;
+            const data = document.getElementById("data-monitoria").value;
+            const tema = document.getElementById("tema-revisao").value;
+
+            const novoAgendamento = {
+                id: Date.now(),
+                data: data,
+                turmaId: turmaId,
+                professorNome: professor.nome,
+                monitor: monitor,
+                tema: tema
+            };
+
+            dbAgendamentosColetivos.push(novoAgendamento);
+            renderizarTabelaAgendamentos();
+            atualizarDashboardGestor();
+
+            const msgSucesso = `Monitoria coletiva confirmada para a turma ${turmaId} na data ${data.split("-").reverse().join("/")}.`;
+            anunciarParaLeitorDeTela(msgSucesso);
+            alert(msgSucesso);
+
+            this.reset();
+            carregarTurmasDoProfessor();
+        });
+
+        // =========================================================================
+        // 4. RENDERIZAÇÃO DA AGENDA E DASHBOARD GESTOR ACESSÍVEL
+        // =========================================================================
+
+        function renderizarTabelaAgendamentos() {
+            const tbody = document.getElementById("tabela-agendamentos");
+            tbody.innerHTML = "";
+
+            dbAgendamentosColetivos.forEach(ag => {
+                const turma = dbTurmas.find(t => t.id === ag.turmaId);
+                const dataFormatada = ag.data.split("-").reverse().join("/");
+
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>${dataFormatada}</td>
+                    <td><strong>${turma.id}</strong> (${turma.qtdAlunos} estudantes)</td>
+                    <td>${ag.professorNome}</td>
+                    <td>${ag.monitor}</td>
+                    <td>${ag.tema}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function atualizarDashboardGestor() {
+            const totalSessoes = dbAgendamentosColetivos.length;
+            let totalAlunosImpactados = 0;
+            const contagemPorTurma = {};
+
+            dbAgendamentosColetivos.forEach(ag => {
+                const turma = dbTurmas.find(t => t.id === ag.turmaId);
+                if (turma) {
+                    totalAlunosImpactados += turma.qtdAlunos;
+                    contagemPorTurma[turma.id] = (contagemPorTurma[turma.id] || 0) + 1;
+                }
+            });
+
+            let turmaTop = "-";
+            let maxSessoes = 0;
+            for (const [turmaId, qtd] of Object.entries(contagemPorTurma)) {
+                if (qtd > maxSessoes) {
+                    maxSessoes = qtd;
+                    turmaTop = turmaId;
+                }
+            }
+
+            document.getElementById("kpi-sessoes").textContent = totalSessoes;
+            document.getElementById("kpi-alunos").textContent = totalAlunosImpactados;
+            document.getElementById("kpi-turma-top").textContent = turmaTop;
+
+            // Gráfico de barras com atributos ARIA para leitores de tela
+            const containerBarras = document.getElementById("grafico-turmas");
+            containerBarras.innerHTML = "";
+
+            dbTurmas.forEach(turma => {
+                const sessoes = contagemPorTurma[turma.id] || 0;
+                const percentual = totalSessoes > 0 ? Math.round((sessoes / totalSessoes) * 100) : 0;
+
+                containerBarras.innerHTML += `
+                    <div class="barra-item">
+                        <div class="barra-info">
+                            <span id="label-barra-${turma.id}"><strong>${turma.nome}</strong></span>
+                            <span>${sessoes} monitoria(s) — ${percentual}% do total</span>
+                        </div>
+                        <div 
+                            class="barra-fundo" 
+                            role="progressbar" 
+                            aria-labelledby="label-barra-${turma.id}" 
+                            aria-valuenow="${percentual}" 
+                            aria-valuemin="0" 
+                            aria-valuemax="100"
+                        >
+                            <div class="barra-preenchimento" style="width: ${percentual}%"></div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            // Tabela de desempenho dos monitores
+            const tbodyMonitores = document.getElementById("tabela-desempenho-monitores");
+            const sessoesJoao = dbAgendamentosColetivos.filter(a => a.monitor.includes("João Silva")).length;
+            const sessoesMaria = dbAgendamentosColetivos.filter(a => a.monitor.includes("Maria Souza")).length;
+
+            tbodyMonitores.innerHTML = `
+                <tr>
+                    <td>João Silva</td>
+                    <td>Programação Web</td>
+                    <td>${sessoesJoao} turma(s)</td>
+                    <td>4,9 de 5,0</td>
+                </tr>
+                <tr>
+                    <td>Maria Souza</td>
+                    <td>Banco de Dados</td>
+                    <td>${sessoesMaria} turma(s)</td>
+                    <td>5,0 de 5,0</td>
+                </tr>
+            `;
+        }
+
+        // Inicialização
+        inicializarFormularioProfessor();
+        renderizarTabelaAgendamentos();
+        atualizarDashboardGestor();
+    </script>
 </body>
 </html>
